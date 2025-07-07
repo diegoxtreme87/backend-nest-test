@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lab-dpb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-nest-test-dpb
+  namespace: lab-dpb
+  labels:
+    app: backend-nest-test-dpb
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend-nest-test-dpb
+  template:
+    metadata:
+      labels:
+        app: backend-nest-test-dpb
+    spec:
+      containers:
+      - name: backend-nest-test-dpb
+        image: us-west1-docker.pkg.dev/lab-agibiz/docker-repository/backend-nest-test-dpb
+        imagePullPolicy: Always
+      imagePullSecrets:
+      - name: regcred-backend-nest-test-dpb

@@ -2,6 +2,9 @@ pipeline {
     agent any
     environment{
         NPM_CONFIG_CACHE= "${WORKSPACE}/.npm"
+        dockerImagePrefix = "us-west1-docker.pkg.dev/lab-agibiz/docker-repository"
+        registry = "https://us-west1-docker.pkg.dev"
+        registryCredentials = "gcp-registry"
     }
     stages{
         stage ("saludo a usuario") {
@@ -35,6 +38,19 @@ pipeline {
                 stage("construccion de la aplicacion"){
                     steps {
                         sh 'npm run build'
+                    }
+                }
+            }
+        }
+        stage ("build y push de imagen docker"){
+            steps {
+                script {
+                    docker.withRegistry("${registry}", registryCredentials ){
+                        sh "docker build -t backend-nest-test-dpb ."
+                        sh "docker tag backend-nest-test-dpb ${dockerImagePrefix}/backend-nest-test-dpb:${BUILD_NUMBER}"
+                        sh "docker push ${dockerImagePrefix}/backend-nest-test-dpb:${BUILD_NUMBER}"
+                        sh "docker tag backend-nest-test-dpb ${dockerImagePrefix}/backend-nest-test-dpb"
+                        sh "docker push ${dockerImagePrefix}/backend-nest-test-dpb"
                     }
                 }
             }
