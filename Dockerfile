@@ -7,6 +7,6 @@ COPY ./package*.json ./
 RUN npm install --only=production
 
 
-EXPOSE 4006
+EXPOSE 4066
 
 CMD ["node", "dist/main.js"]
